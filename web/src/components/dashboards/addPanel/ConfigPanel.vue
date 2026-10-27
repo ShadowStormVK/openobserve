@@ -779,6 +779,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </OInput>
         </div>
 
+        <template v-if="dashboardPanelData.data.type === 'boxplot'">
+          <OSelect
+            v-show="isConfigOptionVisible('data', 'boxplot-whisker')"
+            :label="t('dashboard.boxplotWhisker')"
+            v-model="boxplotWhiskerModel"
+            :options="boxplotWhiskerOptions"
+            data-test="dashboard-config-boxplot_whisker"
+          />
+        </template>
+
         <OSwitch
           v-if="promqlMode && dashboardPanelData.data.type === 'heatmap'"
           v-show="isConfigOptionVisible('data', 'heatmap-histogram-mode')"
@@ -3283,6 +3293,7 @@ import {
   defaultPlaceholder,
   withDefaultChoice,
 } from "@/utils/dashboard/optionDefaults";
+import { BOXPLOT_WHISKERS, DEFAULT_BOXPLOT_WHISKER } from "@/utils/dashboard/convertBoxplotData";
 import {
   DISTRIBUTION_ROW_LIMIT,
   isRawValueChart,
@@ -3710,6 +3721,14 @@ export default defineComponent({
         { label: t("dashboard.gaugeStyleCircle"), value: "circle" },
       ],
       DEFAULT_GAUGE_STYLE,
+    );
+    const boxplotWhiskerModel = choiceModel("boxplot_whisker", BOXPLOT_WHISKERS);
+    const boxplotWhiskerOptions = withDefault(
+      [
+        { label: t("dashboard.boxplotWhiskerMinMax"), value: "minmax" },
+        { label: t("dashboard.boxplotWhiskerIqr"), value: "iqr" },
+      ],
+      DEFAULT_BOXPLOT_WHISKER,
     );
     // Absent, the converters label SQL slices by percent and PromQL slices by all three, so the picker starts there.
     const pieLabelContentDefault = () =>
@@ -4496,6 +4515,7 @@ export default defineComponent({
         "pie",
         "donut",
         "gauge",
+        "boxplot",
         "sankey",
         "hostmap",
       ].includes(dashboardPanelData.data.type);
@@ -4845,6 +4865,8 @@ export default defineComponent({
       statTextModeOptions,
       gaugeStyleModel,
       gaugeStyleOptions,
+      boxplotWhiskerModel,
+      boxplotWhiskerOptions,
       pieLabelContentModel,
       pieLabelContentIsDefault,
       pieLabelContentDefaultHint,
