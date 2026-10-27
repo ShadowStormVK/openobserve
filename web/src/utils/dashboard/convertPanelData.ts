@@ -32,6 +32,7 @@ import { applyPanelTypeOptions } from "./panelTypeOptions";
 import { applyMetricOptions } from "./metricOptions";
 import { applyGeoMapClusters, mapClusterRadius } from "./geoMapCluster";
 import { applyTableOptions } from "./tableOptions";
+import { convertLogsPanelData } from "./convertLogsPanelData";
 import { convertHostmapData } from "./convertHostmapData";
 /**
  * Converts panel data based on the panel schema and data.
@@ -126,6 +127,12 @@ export const convertPanelData = async (
         console.error(error);
         return {};
       }
+    }
+    case "logs": {
+      return {
+        chartType: panelSchema.type,
+        ...convertLogsPanelData(panelSchema, data, store),
+      };
     }
     case "table": {
       // Check if PromQL query type
