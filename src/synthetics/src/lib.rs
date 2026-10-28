@@ -344,4 +344,14 @@ mod job_cluster_gate_tests {
 }
 
 #[cfg(test)]
-mod tests {}
+mod tests {
+    use config::meta::self_reporting::usage::is_system_stream;
+
+    use super::*;
+
+    #[test]
+    fn test_result_streams_are_system_streams() {
+        assert!(is_system_stream("acme", RESULTS_STREAM));
+        assert!(is_system_stream("acme", STEP_RESULTS_STREAM));
+    }
+}
